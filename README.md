@@ -29,3 +29,15 @@ Spark Structured Streaming
        │
        ▼
       SQL
+
+
+## Technology Stack
+
+Linux / AlmaLinux
+Apache Kafka
+Apache Spark
+Spark Structured Streaming
+Apache Iceberg
+SQL
+Python
+OpenSky Network API

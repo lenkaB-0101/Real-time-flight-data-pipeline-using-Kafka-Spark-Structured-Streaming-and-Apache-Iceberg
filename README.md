@@ -1,11 +1,8 @@
 
 # ✈️ Real-Time Flight Telemetry Lakehouse (Kafka, Spark & Apache Iceberg)
 
-![Status](https://shields.io)
-![Host](https://shields.io)
-![Kafka](https://shields.io)
-![Spark](https://shields.io)
-![Iceberg](https://shields.io)
+**Status:** `Completed` | **Host:** `AlmaLinux (Self-Hosted)` | **Stack:** `Apache Kafka` • `Apache Spark` • `Apache Iceberg`
+
 
 
 An end-to-end, fault-tolerant real-time data pipeline ingesting live ADS-B aircraft state vectors from the **OpenSky Network REST API**, streaming through **Apache Kafka**, processing via **Apache Spark Structured Streaming**, and persisting into an ACID-compliant **Apache Iceberg** lakehouse (`flight_catalog.flights.flight_events`) deployed self-hosted on **AlmaLinux**.

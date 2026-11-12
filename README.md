@@ -14,15 +14,14 @@ An end-to-end, fault-tolerant real-time data pipeline ingesting live ADS-B aircr
 ```mermaid
 flowchart LR
     A[OpenSky Network REST API] -->|10s Polling & Retry Logic| B(opensky_producer.py)
-    B -->|Keyed by ICAO24| C{Apache Kafka<br/>Topic: flights}
-    C -->|Micro-Batch + Backpressure| D[iceberg_stream.py<br/>Spark Structured Streaming]
+    B -->|Micro-Batch + Backpressure| D[iceberg_stream.py<br/>Spark Structured Streaming]
     C -.->|Live Inspection| E[kafka_stream_debugger.py<br/>Console Sink]
     D -->|ACID Append + Checkpointing| F[(Apache Iceberg<br/>flight_catalog.flights.flight_events)]
 ```
 
 ### Engineering & Infrastructure Highlights
-* **Bare-Metal / Self-Hosted AlmaLinux Deployment:** Built and tuned directly on a self-hosted **AlmaLinux** environment using local disk storage for the Iceberg warehouse and Spark checkpoints, avoiding managed cloud abstractions to maintain full control over JVM tuning, disk I/O, and resource allocation.
-* **Ordered Ingestion (`opensky_producer.py`):** Polls live global aircraft telemetry and partitions messages in Kafka using the aircraft's `icao24` transponder hex code as the partition key to guarantee strict event ordering per aircraft.
+* **VMware / Self-Hosted AlmaLinux Deployment:** Built and tuned directly on a self-hosted **AlmaLinux** environment using local disk storage for the Iceberg warehouse and Spark checkpoints, avoiding managed cloud abstractions to maintain full control over JVM tuning, disk I/O, and resource allocation.
+* **Ordered Ingestion (`opensky_producer.py`):** Polls live global aircraft telemetry and partitions messages in Kafka.
 * **Backpressure & Micro-Batch Throttling (`iceberg_stream.py`):** Configures `maxOffsetsPerTrigger` (`30,000` records) and `30-second` processing intervals to prevent memory spikes on single-node deployments while maintaining fault-tolerant offset tracking via Spark checkpoints.
 * **Stream Inspection Tooling (`kafka_stream_debugger.py`):** Decoupled console consumer with `10-second` micro-batch throttling for live schema validation and throughput debugging without impacting the primary Iceberg sink.
 
@@ -32,7 +31,7 @@ flowchart LR
 
 ```text
 ├── producer/
-│   └── opensky_producer.py          # OpenSky API ingestion & Kafka producer (keyed by ICAO24)
+│   └── opensky_producer.py          # OpenSky API ingestion & Kafka producer
 ├── streaming/
 │   └── kafka_stream_debugger.py     # Throttled Spark console consumer for live stream debugging
 ├── lakehouse/
@@ -77,7 +76,6 @@ Query the persisted Iceberg table with ACID consistency and snapshot isolation:
 ```sql
 SELECT 
     origin_country,
-    COUNT(DISTINCT icao24) AS active_aircraft,
     ROUND(AVG(baro_altitude), 2) AS avg_altitude_m,
     ROUND(AVG(velocity), 2) AS avg_velocity_ms
 FROM flight_catalog.flights.flight_events
@@ -93,9 +91,9 @@ LIMIT 10;
 ## 🛠️ Environment & Version Compatibility
 
 * **OS:** AlmaLinux (Self-Hosted)
-* **Apache Spark:** `4.1.13` (Scala `2.13`)
-* **Apache Iceberg:** `1.5.0` (`iceberg-spark-runtime` matched to Spark `4.1` / Scala `2.13` ABI; newer `4.2.13` builds introduce breaking catalog API changes with this Iceberg runtime)
-* **Apache Kafka:** (KRaft)
+* **Apache Spark:** `4.1.4` (Scala `2.13`)
+* **Apache Iceberg:** `1.12.0` (`iceberg-spark-runtime` matched to Spark `4.1` / Scala `2.13` ABI; newer `4.2.13` builds introduce breaking catalog API changes with this Iceberg runtime)
+* **Apache Kafka:** `4.3.1` (KRaft)
 
 
 ---

@@ -93,9 +93,9 @@ LIMIT 10;
 ## 🛠️ Environment & Version Compatibility
 
 * **OS:** AlmaLinux (Self-Hosted)
-* **Apache Spark:** `4.1.x` (Scala `2.13`)
-* **Apache Iceberg:** `1.5.0` (`iceberg-spark-runtime` matched to Spark `4.1` / Scala `2.13` ABI; newer `4.2.x` builds introduce breaking catalog API changes with this Iceberg runtime)
-* **Apache Kafka:** `3.x` (KRaft / Zookeeper)
+* **Apache Spark:** `4.1.13` (Scala `2.13`)
+* **Apache Iceberg:** `1.5.0` (`iceberg-spark-runtime` matched to Spark `4.1` / Scala `2.13` ABI; newer `4.2.13` builds introduce breaking catalog API changes with this Iceberg runtime)
+* **Apache Kafka:** (KRaft)
 
 
 ---

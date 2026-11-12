@@ -5,7 +5,7 @@
 
 
 
-An end-to-end, fault-tolerant real-time data pipeline ingesting live ADS-B aircraft state vectors from the **OpenSky Network REST API**, streaming through **Apache Kafka**, processing via **Apache Spark Structured Streaming**, and persisting into an ACID-compliant **Apache Iceberg** lakehouse (`flight_catalog.flights.flight_events`) deployed self-hosted on **AlmaLinux**.
+An end-to-end, real-time data pipeline ingesting live ADS-B aircraft state vectors from the **OpenSky Network REST API**, streaming through **Apache Kafka**, processing via **Apache Spark Structured Streaming**, and persisting into an ACID-compliant **Apache Iceberg** lakehouse (`flight_catalog.flights.flight_events`) deployed self-hosted on **AlmaLinux**.
 
 ---
 
@@ -22,7 +22,7 @@ flowchart LR
 ### Engineering & Infrastructure Highlights
 * **VMware / Self-Hosted AlmaLinux Deployment:** Built and tuned directly on a self-hosted **AlmaLinux** environment using local disk storage for the Iceberg warehouse and Spark checkpoints, avoiding managed cloud abstractions to maintain full control over JVM tuning, disk I/O, and resource allocation.
 * **Ordered Ingestion (`opensky_producer.py`):** Polls live global aircraft telemetry and partitions messages in Kafka.
-* **Backpressure & Micro-Batch Throttling (`iceberg_stream.py`):** Configures `maxOffsetsPerTrigger` (`30,000` records) and `30-second` processing intervals to prevent memory spikes on single-node deployments while maintaining fault-tolerant offset tracking via Spark checkpoints.
+* **Micro-Batch Throttling (`iceberg_stream.py`):** Configures `maxOffsetsPerTrigger` `30-second` processing intervals to prevent memory spikes on single-node deployments while maintaining fault-tolerant offset tracking via Spark checkpoints.
 * **Stream Inspection Tooling (`kafka_stream_debugger.py`):** Decoupled console consumer with `10-second` micro-batch throttling for live schema validation and throughput debugging without impacting the primary Iceberg sink.
 
 ---
@@ -95,6 +95,16 @@ LIMIT 10;
 * **Apache Iceberg:** `1.12.0` (`iceberg-spark-runtime` matched to Spark `4.1` / Scala `2.13` ABI; newer `4.2.13` builds introduce breaking catalog API changes with this Iceberg runtime)
 * **Apache Kafka:** `4.3.1` (KRaft)
 
+
+---
+
+## 📊 Results & Validation
+
+- Successfully ingested approximately 39,116 live aircraft telemetry records from the OpenSky Network API.
+- Published JSON flight events to the Apache Kafka `flights` topic.
+- Processed streaming data using Apache Spark Structured Streaming.
+- Persisted processed records into an Apache Iceberg table: `flight_catalog.flights.flight_events`.
+- Verified the physical Parquet data files and Iceberg metadata in the local warehouse.
 
 ---
 

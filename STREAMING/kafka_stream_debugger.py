@@ -7,7 +7,7 @@ enforces a strict schema, and outputs throttled micro-batches to the console for
 
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col, to_timestamp
+from pyspark.sql.functions import from_json, col, timestamp_seconds
 from pyspark.sql.types import (
     StructType,
     StructField,
@@ -62,7 +62,7 @@ def main() -> None:
         kafka_df
         .select(from_json(col("value").cast("string"), get_flight_schema()).alias("data"))
         .select("data.*")
-        .withColumn("event_timestamp", to_timestamp(col("event_time")))
+        .withColumn("event_timestamp", timestamp_seconds(col("event_time")))
     )
 
     # Throttle micro-batch execution to optimize CPU/memory usage on single-node Linux host

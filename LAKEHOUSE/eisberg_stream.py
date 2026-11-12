@@ -1,9 +1,8 @@
 """
 Kafka to Apache Iceberg Streaming Sink.
 
-Consumes live flight telemetry from Apache Kafka, enforces schema validation,
-applies backpressure control (maxOffsetsPerTrigger), and persists micro-batches
-into an ACID-compliant Apache Iceberg table with fault-tolerant checkpointing.
+Consumes live flight telemetry from Apache Kafka, applies an explicit schema,
+and persists micro-batches into an ACID-compliant Apache Iceberg table.
 """
 
 import os

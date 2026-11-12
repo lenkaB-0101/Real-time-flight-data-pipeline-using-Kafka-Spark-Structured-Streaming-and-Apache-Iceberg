@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # Configuration (defaults to local self-hosted AlmaLinux setup)
 KAFKA_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "flights")
-OPENSKY_URL = "https://opensky-network.org"
+OPENSKY_URL = OPENSKY_URL = "https://opensky-network.org/api/states/all"
 POLL_INTERVAL_SEC = int(os.getenv("POLL_INTERVAL_SEC", "10"))
 
 
